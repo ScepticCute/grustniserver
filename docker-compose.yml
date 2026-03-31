@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: labs-db
+    restart: always
+    environment:
+      POSTGRES_DB: labs_db
+      POSTGRES_USER: labs_user
+      POSTGRES_PASSWORD: labs_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: labs-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://labs_user:labs_password@db:5432/labs_db
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
